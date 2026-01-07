@@ -4,33 +4,86 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>JPG to PDF – Free Tool</title>
-  <meta name="description" content="Convert JPG images to PDF for free. No signup." />
+  <meta name="description" content="Convert JPG/PNG images to a single PDF in your browser. No signup." />
   <link rel="stylesheet" href="../../assets/style.css" />
 </head>
 <body>
   <div class="container">
     <div class="header">
       <div class="brand">
-        <h1>JPG to PDF</h1>
-        <p>Template page is ready. Next: implement converter (jsPDF).</p>
+        <h1>JPG / PNG → PDF</h1>
+        <p>Runs locally in your browser. No uploads.</p>
       </div>
       <a class="badge" href="../../">← Back to Hub</a>
     </div>
 
-    <div class="card">
-      <h2>Upload JPG files</h2>
-      <p class="small">This page is a placeholder. I’ll wire the real conversion next.</p>
-      <div class="hr"></div>
-      <input class="input" type="file" accept="image/jpeg,image/png" multiple />
-      <div class="row" style="margin-top:12px">
-        <button class="btn primary" disabled>Convert to PDF</button>
-        <button class="btn" disabled>Clear</button>
+    <div class="grid">
+      <div class="card" style="grid-column: span 12;">
+        <h2>1) Add images</h2>
+        <p class="small">Tip: You can reorder pages with ↑ ↓ buttons.</p>
+        <input class="input" id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+        <div class="row" style="margin-top:12px">
+          <button class="btn" id="clearBtn" disabled>Clear</button>
+        </div>
+
+        <div class="hr"></div>
+
+        <div id="list" class="grid" style="gap:10px"></div>
+      </div>
+
+      <div class="card" style="grid-column: span 12;">
+        <h2>2) PDF options</h2>
+        <div class="row">
+          <span class="small">Page size</span>
+          <select class="input" id="pageSize" style="max-width:220px">
+            <option value="a4" selected>A4</option>
+            <option value="letter">Letter</option>
+          </select>
+
+          <span class="small">Orientation</span>
+          <select class="input" id="orientation" style="max-width:220px">
+            <option value="portrait" selected>Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+
+          <span class="small">Fit</span>
+          <select class="input" id="fit" style="max-width:220px">
+            <option value="contain" selected>Contain (no crop)</option>
+            <option value="cover">Cover (crop to fill)</option>
+          </select>
+
+          <span class="small">Margin (mm)</span>
+          <input class="input" id="margin" type="number" min="0" max="30" value="6" style="max-width:120px" />
+        </div>
+
+        <div class="row" style="margin-top:10px; align-items:center">
+          <span class="small">Quality</span>
+          <input class="input" id="quality" type="range" min="50" max="95" value="82" style="max-width:260px" />
+          <span class="pill" id="qualityLabel">82</span>
+
+          <label class="pill">
+            <input type="checkbox" id="autoRotate" checked />
+            Auto-rotate per image
+          </label>
+        </div>
+
+        <div class="hr"></div>
+
+        <div class="row">
+          <button class="btn primary" id="convertBtn" disabled>Convert to PDF</button>
+          <span class="pill" id="status">Add images to start.</span>
+        </div>
+        <div class="small" id="hint" style="margin-top:10px">
+          Large files may take a bit longer. Keep the tab open while converting.
+        </div>
       </div>
     </div>
 
-    <div class="footer small">Runs locally in your browser.</div>
+    <div class="footer small">Powered by jsPDF (client-side).</div>
   </div>
 
+  <!-- jsPDF (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>
