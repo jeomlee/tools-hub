@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tools-hub-4t9.pages.dev/sitemap.xml
