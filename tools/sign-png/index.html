@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Signature to PNG – Free Tool</title>
+  <meta name="description" content="Draw a signature and download it as a transparent PNG for free." />
+  <link rel="stylesheet" href="../../assets/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Signature → Transparent PNG</h1>
+        <p>Draw in the box, then download as PNG.</p>
+      </div>
+      <a class="badge" href="../../">← Back to Hub</a>
+    </div>
+
+    <div class="card">
+      <h2>Draw</h2>
+      <canvas id="pad" style="width:100%; height:260px; border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.02)"></canvas>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="clear">Clear</button>
+        <button class="btn primary" id="download">Download PNG</button>
+      </div>
+      <div class="small" id="hint" style="margin-top:10px">Tip: Use mouse or touch. PNG will have transparent background.</div>
+    </div>
+
+    <div class="footer small">No uploads. Everything stays on your device.</div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

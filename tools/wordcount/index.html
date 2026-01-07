@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Word Count – Free Tool</title>
+  <meta name="description" content="Count words and characters instantly for free." />
+  <link rel="stylesheet" href="../../assets/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Word Count</h1>
+        <p>Paste text and get counts instantly.</p>
+      </div>
+      <a class="badge" href="../../">← Back to Hub</a>
+    </div>
+
+    <div class="card">
+      <h2>Text</h2>
+      <textarea id="text" placeholder="Paste or type here..."></textarea>
+      <div class="hr"></div>
+      <div class="row">
+        <span class="pill" id="words">Words: 0</span>
+        <span class="pill" id="chars">Chars: 0</span>
+        <span class="pill" id="charsNoSpace">Chars (no spaces): 0</span>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="clearBtn">Clear</button>
+      </div>
+    </div>
+
+    <div class="footer small">No data leaves your device.</div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Password Generator – Free Tool</title>
+  <meta name="description" content="Generate strong passwords quickly for free." />
+  <link rel="stylesheet" href="../../assets/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Password Generator</h1>
+        <p>Generate and copy strong passwords.</p>
+      </div>
+      <a class="badge" href="../../">← Back to Hub</a>
+    </div>
+
+    <div class="card">
+      <h2>Options</h2>
+      <div class="row">
+        <label class="pill"><input type="checkbox" id="lower" checked> a-z</label>
+        <label class="pill"><input type="checkbox" id="upper" checked> A-Z</label>
+        <label class="pill"><input type="checkbox" id="nums" checked> 0-9</label>
+        <label class="pill"><input type="checkbox" id="syms" checked> symbols</label>
+      </div>
+      <div class="hr"></div>
+
+      <div class="row" style="align-items:center">
+        <span class="small">Length</span>
+        <input class="input" style="max-width:120px" type="number" id="len" min="6" max="64" value="16" />
+        <button class="btn primary" id="genBtn">Generate</button>
+        <button class="btn" id="copyBtn">Copy</button>
+      </div>
+
+      <div class="hr"></div>
+      <input class="input" id="out" readonly placeholder="Your password will appear here" />
+      <div class="small" id="msg" style="margin-top:10px"></div>
+    </div>
+
+    <div class="footer small">Generated locally in your browser.</div>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>

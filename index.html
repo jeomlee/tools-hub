@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Free Mini Tools Hub – PDF • Image • Text</title>
+  <meta name="description" content="A lightweight hub of free tools: JPG to PDF, PDF to JPG, word count, password generator, and signature PNG." />
+  <link rel="stylesheet" href="./assets/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Mini Tools Hub</h1>
+        <p>Free, fast, no signup. Everything runs in your browser when possible.</p>
+      </div>
+      <div class="badge" id="statusBadge">● Ready</div>
+    </div>
+
+    <div class="grid" id="toolsGrid">
+      <a class="card" href="./tools/jpg-to-pdf/">
+        <h2>JPG to PDF</h2>
+        <p>Combine images into a PDF. (Template page ready; next step: full converter)</p>
+        <div class="meta">
+          <span class="pill">PDF</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/pdf-to-jpg/">
+        <h2>PDF to JPG</h2>
+        <p>Extract pages as images. (Template page; needs pdf.js wiring)</p>
+        <div class="meta">
+          <span class="pill">PDF</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/wordcount/">
+        <h2>Word Count</h2>
+        <p>Count words/characters instantly. Works now.</p>
+        <div class="meta">
+          <span class="pill">TEXT</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/password/">
+        <h2>Password Generator</h2>
+        <p>Create strong passwords in one click. Works now.</p>
+        <div class="meta">
+          <span class="pill">SECURITY</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/sign-png/">
+        <h2>Signature to PNG</h2>
+        <p>Draw a signature and download as transparent PNG. Works now.</p>
+        <div class="meta">
+          <span class="pill">IMAGE</span>
+          <span>Open →</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer">
+      Tip: Keep this as a single Cloudflare Pages project. Add more tools under <code>/tools/</code>.
+    </div>
+  </div>
+
+  <script src="./assets/hub.js"></script>
+</body>
+</html>
