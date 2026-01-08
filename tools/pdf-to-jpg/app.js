@@ -13,9 +13,9 @@
   const $progressWrap = document.getElementById('progressWrap');
   const $progressBar = document.getElementById('progressBar');
 
-  // pdf.js worker
+  // ✅ legacy worker (same version) to match legacy build
   pdfjsLib.GlobalWorkerOptions.workerSrc =
-    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.js';
+    'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.worker.min.js';
 
   let currentFile = null;
   let cancelled = false;
@@ -133,7 +133,7 @@
 
     const scale = parseFloat($scale.value || '1.5');
     const format = ($format.value || 'jpg').toLowerCase();
-    const jpgQuality = format === 'jpg'
+    const jpgQuality = (format === 'jpg')
       ? Math.max(0.1, Math.min(1.0, parseFloat($jpgQuality?.value || '0.85')))
       : 1.0;
 
@@ -213,5 +213,6 @@
     setProgress(null);
   }
 
+  // init
   resetUI();
 })();

@@ -30,12 +30,7 @@
       <div class="hr"></div>
 
       <!-- FILE INPUT -->
-      <input
-        id="file"
-        class="input"
-        type="file"
-        accept="application/pdf"
-      />
+      <input id="file" class="input" type="file" accept="application/pdf" />
 
       <!-- OPTIONS -->
       <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
@@ -79,10 +74,7 @@
       <!-- PROGRESS -->
       <div id="progressWrap" style="margin-top:10px; display:none;">
         <div style="height:10px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden;">
-          <div
-            id="progressBar"
-            style="height:10px; width:0%; background:rgba(255,255,255,.5);">
-          </div>
+          <div id="progressBar" style="height:10px; width:0%; background:rgba(255,255,255,.5);"></div>
         </div>
       </div>
 
@@ -98,17 +90,16 @@
   </div>
 
   <!-- =====================================================
-       IMPORTANT: Script loading order (DO NOT CHANGE)
+       IMPORTANT: Use pdfjs "legacy" build so pdfjsLib exists
        ===================================================== -->
 
-  <!-- 1) pdf.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.js"></script>
+  <!-- 1) pdf.js (legacy/UMD) -->
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/pdf.min.js"></script>
 
   <!-- 2) JSZip -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
-  <!-- 3) App logic (must be last) -->
+  <!-- 3) App logic -->
   <script src="./app.js"></script>
-
 </body>
 </html>
