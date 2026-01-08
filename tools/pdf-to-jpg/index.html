@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>PDF to JPG – Free Tool</title>
-  <meta name="description" content="Convert PDF pages to JPG images online for free." />
+  <meta name="description" content="Convert PDF pages to JPG images in your browser for free. No upload." />
   <link rel="stylesheet" href="../../assets/style.css" />
 </head>
 <body>
@@ -12,24 +12,62 @@
     <div class="header">
       <div class="brand">
         <h1>PDF to JPG</h1>
-        <p>Template page is ready. Next: implement with pdf.js.</p>
+        <p>Runs locally in your browser (no upload).</p>
       </div>
       <a class="badge" href="../../">← Back to Hub</a>
     </div>
 
     <div class="card">
       <h2>Upload a PDF</h2>
-      <p class="small">This page is a placeholder. I’ll wire the extraction next.</p>
+      <p class="small">Tip: Large PDFs can be slow. Keep it under ~50MB if possible.</p>
       <div class="hr"></div>
-      <input class="input" type="file" accept="application/pdf" />
-      <div class="row" style="margin-top:12px">
-        <button class="btn primary" disabled>Extract pages</button>
-        <button class="btn" disabled>Clear</button>
+
+      <input id="file" class="input" type="file" accept="application/pdf" />
+
+      <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
+        <label class="small">
+          Scale
+          <select id="scale" class="input" style="width:auto; display:inline-block; margin-left:8px;">
+            <option value="1.0">1.0 (fast)</option>
+            <option value="1.5" selected>1.5</option>
+            <option value="2.0">2.0 (sharp)</option>
+          </select>
+        </label>
+
+        <label class="small">
+          Format
+          <select id="format" class="input" style="width:auto; display:inline-block; margin-left:8px;">
+            <!-- JPG true output in-browser is possible but more code; PNG is safer.
+                 We'll output PNG by default, and name files .png. -->
+            <option value="png" selected>PNG</option>
+          </select>
+        </label>
       </div>
+
+      <div class="row" style="margin-top:12px">
+        <button id="extract" class="btn primary" disabled>Extract pages</button>
+        <button id="clear" class="btn" disabled>Clear</button>
+        <button id="cancel" class="btn" disabled>Cancel</button>
+      </div>
+
+      <div id="status" class="small" style="margin-top:12px; opacity:.85;"></div>
+      <div id="progressWrap" style="margin-top:10px; display:none;">
+        <div style="height:10px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden;">
+          <div id="progressBar" style="height:10px; width:0%; background:rgba(255,255,255,.5);"></div>
+        </div>
+      </div>
+
+      <div class="hr" style="margin-top:16px;"></div>
+      <div id="result" class="small"></div>
     </div>
 
-    <div class="footer small">Runs locally in your browser (no upload to server).</div>
+    <div class="footer small">All processing happens on your device. No files are uploaded.</div>
   </div>
+
+  <!-- pdf.js + worker (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.js"></script>
+  <!-- JSZip for multi-page download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
   <script src="./app.js"></script>
 </body>
