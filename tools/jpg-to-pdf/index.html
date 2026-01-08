@@ -4,86 +4,82 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>JPG to PDF – Free Tool</title>
-  <meta name="description" content="Convert JPG/PNG images to a single PDF in your browser. No signup." />
+  <meta name="description" content="Convert JPG/PNG images into a single PDF in your browser. No upload." />
   <link rel="stylesheet" href="../../assets/style.css" />
 </head>
 <body>
   <div class="container">
     <div class="header">
       <div class="brand">
-        <h1>JPG / PNG → PDF</h1>
-        <p>Runs locally in your browser. No uploads.</p>
+        <h1>JPG to PDF</h1>
+        <p>Combine images into one PDF. Runs locally (no upload).</p>
       </div>
       <a class="badge" href="../../">← Back to Hub</a>
     </div>
 
-    <div class="grid">
-      <div class="card" style="grid-column: span 12;">
-        <h2>1) Add images</h2>
-        <p class="small">Tip: You can reorder pages with ↑ ↓ buttons.</p>
-        <input class="input" id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" multiple />
-        <div class="row" style="margin-top:12px">
-          <button class="btn" id="clearBtn" disabled>Clear</button>
-        </div>
+    <div class="card">
+      <h2>Select images</h2>
+      <p class="small">Add multiple JPG/PNG images. Drag to reorder. Large images will be auto-downscaled if enabled.</p>
+      <div class="hr"></div>
 
-        <div class="hr"></div>
+      <input id="files" class="input" type="file" accept="image/jpeg,image/png" multiple />
 
-        <div id="list" class="grid" style="gap:10px"></div>
-      </div>
-
-      <div class="card" style="grid-column: span 12;">
-        <h2>2) PDF options</h2>
-        <div class="row">
-          <span class="small">Page size</span>
-          <select class="input" id="pageSize" style="max-width:220px">
+      <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
+        <label class="small">
+          Page size
+          <select id="pageSize" class="input" style="width:auto; margin-left:8px;">
             <option value="a4" selected>A4</option>
             <option value="letter">Letter</option>
+            <option value="auto">Auto (match image)</option>
           </select>
+        </label>
 
-          <span class="small">Orientation</span>
-          <select class="input" id="orientation" style="max-width:220px">
-            <option value="portrait" selected>Portrait</option>
-            <option value="landscape">Landscape</option>
+        <label class="small">
+          Fit
+          <select id="fit" class="input" style="width:auto; margin-left:8px;">
+            <option value="contain" selected>Contain</option>
+            <option value="cover">Cover</option>
           </select>
+        </label>
 
-          <span class="small">Fit</span>
-          <select class="input" id="fit" style="max-width:220px">
-            <option value="contain" selected>Contain (no crop)</option>
-            <option value="cover">Cover (crop to fill)</option>
+        <label class="small">
+          Margin
+          <select id="margin" class="input" style="width:auto; margin-left:8px;">
+            <option value="0">0</option>
+            <option value="12" selected>12</option>
+            <option value="24">24</option>
           </select>
+        </label>
 
-          <span class="small">Margin (mm)</span>
-          <input class="input" id="margin" type="number" min="0" max="30" value="6" style="max-width:120px" />
-        </div>
-
-        <div class="row" style="margin-top:10px; align-items:center">
-          <span class="small">Quality</span>
-          <input class="input" id="quality" type="range" min="50" max="95" value="82" style="max-width:260px" />
-          <span class="pill" id="qualityLabel">82</span>
-
-          <label class="pill">
-            <input type="checkbox" id="autoRotate" checked />
-            Auto-rotate per image
-          </label>
-        </div>
-
-        <div class="hr"></div>
-
-        <div class="row">
-          <button class="btn primary" id="convertBtn" disabled>Convert to PDF</button>
-          <span class="pill" id="status">Add images to start.</span>
-        </div>
-        <div class="small" id="hint" style="margin-top:10px">
-          Large files may take a bit longer. Keep the tab open while converting.
-        </div>
+        <label class="small" style="display:flex; align-items:center; gap:8px;">
+          <input id="downscale" type="checkbox" checked />
+          Auto downscale (recommended)
+        </label>
       </div>
+
+      <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
+        <button id="make" class="btn primary" disabled>Create PDF</button>
+        <button id="clear" class="btn" disabled>Clear</button>
+      </div>
+
+      <div id="status" class="small" style="margin-top:12px; opacity:.85;"></div>
+
+      <div id="listWrap" style="margin-top:14px; display:none;">
+        <div class="hr"></div>
+        <h2 style="margin-bottom:8px;">Images</h2>
+        <p class="small" style="opacity:.85;">Drag to reorder.</p>
+        <div id="list"></div>
+      </div>
+
+      <div class="hr" style="margin-top:16px;"></div>
+      <div id="result" class="small"></div>
     </div>
 
-    <div class="footer small">Powered by jsPDF (client-side).</div>
+    <div class="footer small">All processing happens on your device. No files are uploaded.</div>
   </div>
 
-  <!-- jsPDF (CDN) -->
-  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <!-- pdf-lib -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
   <script src="./app.js"></script>
 </body>
 </html>

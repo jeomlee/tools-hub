@@ -1,281 +1,321 @@
-const fileInput = document.getElementById("fileInput");
-const clearBtn = document.getElementById("clearBtn");
-const convertBtn = document.getElementById("convertBtn");
-const listEl = document.getElementById("list");
-const statusEl = document.getElementById("status");
+/* global PDFLib */
+(() => {
+  const $files = document.getElementById('files');
+  const $make = document.getElementById('make');
+  const $clear = document.getElementById('clear');
+  const $status = document.getElementById('status');
+  const $result = document.getElementById('result');
+  const $listWrap = document.getElementById('listWrap');
+  const $list = document.getElementById('list');
 
-const pageSizeEl = document.getElementById("pageSize");
-const orientationEl = document.getElementById("orientation");
-const fitEl = document.getElementById("fit");
-const marginEl = document.getElementById("margin");
-const qualityEl = document.getElementById("quality");
-const qualityLabel = document.getElementById("qualityLabel");
-const autoRotateEl = document.getElementById("autoRotate");
+  const $pageSize = document.getElementById('pageSize');
+  const $fit = document.getElementById('fit');
+  const $margin = document.getElementById('margin');
+  const $downscale = document.getElementById('downscale');
 
-qualityEl.addEventListener("input", () => (qualityLabel.textContent = qualityEl.value));
+  /** @type {{id:string,file:File, url:string}[]} */
+  let items = [];
 
-/** @type {{id:string,file:File,url:string,width?:number,height?:number}[]} */
-let items = [];
-
-function uid() {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-function setStatus(msg) {
-  statusEl.textContent = msg;
-}
-
-function enableActions() {
-  const has = items.length > 0;
-  clearBtn.disabled = !has;
-  convertBtn.disabled = !has;
-}
-
-function formatBytes(bytes) {
-  const units = ["B", "KB", "MB", "GB"];
-  let i = 0;
-  let n = bytes;
-  while (n >= 1024 && i < units.length - 1) {
-    n /= 1024;
-    i++;
-  }
-  return `${n.toFixed(i === 0 ? 0 : 1)} ${units[i]}`;
-}
-
-function render() {
-  listEl.innerHTML = "";
-  items.forEach((it, idx) => {
-    const card = document.createElement("div");
-    card.className = "card";
-    card.style.gridColumn = "span 6";
-
-    card.innerHTML = `
-      <h2 style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 0 10px">
-        <span>Page ${idx + 1}</span>
-        <span class="pill">${formatBytes(it.file.size)}</span>
-      </h2>
-      <div style="border:1px solid var(--line); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.02)">
-        <img src="${it.url}" alt="preview" style="width:100%; height:220px; object-fit:contain; display:block" />
-      </div>
-      <div class="row" style="margin-top:12px">
-        <button class="btn" data-act="up" ${idx === 0 ? "disabled" : ""}>↑</button>
-        <button class="btn" data-act="down" ${idx === items.length - 1 ? "disabled" : ""}>↓</button>
-        <button class="btn" data-act="remove">Remove</button>
-      </div>
-      <div class="small" style="margin-top:10px; color:var(--muted)">${it.file.name}</div>
-    `;
-
-    card.addEventListener("click", (e) => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
-      const act = btn.getAttribute("data-act");
-      if (act === "remove") {
-        URL.revokeObjectURL(it.url);
-        items = items.filter((x) => x.id !== it.id);
-      } else if (act === "up" && idx > 0) {
-        const tmp = items[idx - 1];
-        items[idx - 1] = items[idx];
-        items[idx] = tmp;
-      } else if (act === "down" && idx < items.length - 1) {
-        const tmp = items[idx + 1];
-        items[idx + 1] = items[idx];
-        items[idx] = tmp;
-      }
-      render();
-      enableActions();
-      setStatus(items.length ? `${items.length} image(s) ready.` : "Add images to start.");
-    });
-
-    listEl.appendChild(card);
-  });
-
-  enableActions();
-}
-
-fileInput.addEventListener("change", async () => {
-  const files = Array.from(fileInput.files || []);
-  if (!files.length) return;
-
-  // add in selection order
-  for (const f of files) {
-    const url = URL.createObjectURL(f);
-    items.push({ id: uid(), file: f, url });
+  function uid() {
+    return Math.random().toString(16).slice(2) + Date.now().toString(16);
   }
 
-  render();
-  setStatus(`${items.length} image(s) ready.`);
-  fileInput.value = "";
-});
+  function setStatus(msg) { $status.textContent = msg || ''; }
+  function setResult(html) { $result.innerHTML = html || ''; }
 
-clearBtn.addEventListener("click", () => {
-  for (const it of items) URL.revokeObjectURL(it.url);
-  items = [];
-  render();
-  setStatus("Cleared. Add images to start.");
-});
-
-function loadImageFromBlobURL(url) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = url;
-  });
-}
-
-function drawToCanvas(img, targetW, targetH, mode) {
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.max(1, Math.floor(targetW));
-  canvas.height = Math.max(1, Math.floor(targetH));
-  const ctx = canvas.getContext("2d");
-  ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = "high";
-
-  // contain/cover
-  const iw = img.naturalWidth || img.width;
-  const ih = img.naturalHeight || img.height;
-
-  const sx = 0, sy = 0, sw = iw, sh = ih;
-
-  // calculate scale
-  const scaleContain = Math.min(targetW / iw, targetH / ih);
-  const scaleCover = Math.max(targetW / iw, targetH / ih);
-  const scale = mode === "cover" ? scaleCover : scaleContain;
-
-  const dw = iw * scale;
-  const dh = ih * scale;
-  const dx = (targetW - dw) / 2;
-  const dy = (targetH - dh) / 2;
-
-  // white background not needed; keep transparent
-  ctx.clearRect(0, 0, targetW, targetH);
-  ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh);
-
-  return canvas;
-}
-
-function mmToPt(mm) {
-  // 1 inch = 25.4 mm, 1 pt = 1/72 inch
-  return (mm / 25.4) * 72;
-}
-
-function getPageDims(size, orientation) {
-  // in mm
-  let w, h;
-  if (size === "letter") {
-    w = 215.9; h = 279.4;
-  } else {
-    w = 210; h = 297; // a4
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
   }
-  if (orientation === "landscape") [w, h] = [h, w];
-  return { w, h };
-}
 
-convertBtn.addEventListener("click", async () => {
-  if (!items.length) return;
+  function enableUI() {
+    const has = items.length > 0;
+    $make.disabled = !has;
+    $clear.disabled = !has;
+    $listWrap.style.display = has ? 'block' : 'none';
+  }
 
-  convertBtn.disabled = true;
-  clearBtn.disabled = true;
-  fileInput.disabled = true;
+  function cleanupUrls() {
+    for (const it of items) URL.revokeObjectURL(it.url);
+  }
 
-  try {
-    const { jsPDF } = window.jspdf;
-    const pageSize = pageSizeEl.value;
-    const orientation = orientationEl.value;
-    const fitMode = fitEl.value; // contain / cover
-    const marginMm = Math.max(0, Math.min(30, Number(marginEl.value || 0)));
-    const quality = Math.max(0.5, Math.min(0.95, Number(qualityEl.value) / 100));
-    const autoRotate = !!autoRotateEl.checked;
+  function reset() {
+    cleanupUrls();
+    items = [];
+    $files.value = '';
+    $list.innerHTML = '';
+    setStatus('');
+    setResult('');
+    enableUI();
+  }
 
-    const baseDims = getPageDims(pageSize, orientation);
-    const pdf = new jsPDF({
-      orientation,
-      unit: "mm",
-      format: pageSize,
-      compress: true,
-    });
+  function downloadBytes(bytes, filename) {
+    const blob = new Blob([bytes], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
 
-    const pageW = baseDims.w;
-    const pageH = baseDims.h;
-    const contentW = pageW - marginMm * 2;
-    const contentH = pageH - marginMm * 2;
+  function getPageBox(mode, imgW, imgH) {
+    // points (1pt = 1/72 inch)
+    if (mode === 'letter') return { w: 612, h: 792 };
+    if (mode === 'a4') return { w: 595.28, h: 841.89 };
+    // auto: map px -> pt by assuming 96dpi => pt = px * 72/96 = px*0.75
+    const scale = 0.75;
+    return { w: Math.max(72, imgW * scale), h: Math.max(72, imgH * scale) };
+  }
 
-    for (let i = 0; i < items.length; i++) {
-      setStatus(`Converting ${i + 1} / ${items.length}...`);
+  function fitRect(imgW, imgH, boxW, boxH, mode) {
+    const imgRatio = imgW / imgH;
+    const boxRatio = boxW / boxH;
 
-      const it = items[i];
-      const img = await loadImageFromBlobURL(it.url);
-
-      // auto-rotate per image based on aspect ratio (optional)
-      let drawW = contentW;
-      let drawH = contentH;
-
-      // If autoRotate: swap orientation for this page if image is landscape vs portrait mismatch
-      // We'll handle by rotating the canvas content via jsPDF rotation
-      // Simpler: if mismatch is big, rotate 90 degrees
-      const iw = img.naturalWidth || img.width;
-      const ih = img.naturalHeight || img.height;
-      const imgLandscape = iw >= ih;
-      const pageLandscape = contentW >= contentH;
-
-      const shouldRotate90 = autoRotate && (imgLandscape !== pageLandscape);
-
-      // Create a canvas that matches content box in pixels (scaled)
-      // Use a reasonable multiplier to keep memory low
-      const scalePx = 4; // ~ (mm -> px) multiplier-ish
-      const targetPxW = Math.floor(drawW * scalePx * 10);
-      const targetPxH = Math.floor(drawH * scalePx * 10);
-
-      // If rotating, swap target canvas dims for drawing image
-      const canvas = drawToCanvas(
-        img,
-        shouldRotate90 ? targetPxH : targetPxW,
-        shouldRotate90 ? targetPxW : targetPxH,
-        fitMode
-      );
-
-      const dataUrl = canvas.toDataURL("image/jpeg", quality);
-
-      if (i > 0) pdf.addPage(pageSize, orientation);
-
-      if (shouldRotate90) {
-        // Place rotated: use jsPDF's rotate around top-left, then translate
-        // We'll draw into a landscape/portrait content box by rotating the image.
-        // Rotation is applied in degrees at a given point.
-        // Strategy:
-        // 1) translate to where we want the image after rotation
-        // 2) rotate 90
-        // 3) draw with swapped dims
-        pdf.saveGraphicsState();
-        // rotate around top-left corner of content area
-        pdf.rotate(90, { origin: [marginMm, marginMm] });
-        // after 90deg rotation, x/y axes swap; draw at (margin, -margin - contentW)
-        pdf.addImage(
-          dataUrl,
-          "JPEG",
-          marginMm,
-          -marginMm - contentW,
-          contentH,
-          contentW
-        );
-        pdf.restoreGraphicsState();
+    let w, h;
+    if (mode === 'cover') {
+      // fill box
+      if (imgRatio > boxRatio) {
+        h = boxH;
+        w = h * imgRatio;
       } else {
-        pdf.addImage(dataUrl, "JPEG", marginMm, marginMm, contentW, contentH);
+        w = boxW;
+        h = w / imgRatio;
+      }
+    } else {
+      // contain
+      if (imgRatio > boxRatio) {
+        w = boxW;
+        h = w / imgRatio;
+      } else {
+        h = boxH;
+        w = h * imgRatio;
       }
     }
-
-    setStatus("Generating file...");
-    pdf.save(`images-to-pdf-${Date.now()}.pdf`);
-    setStatus("Done! Download should start.");
-  } catch (err) {
-    console.error(err);
-    setStatus("Error: conversion failed. Try fewer/smaller images or lower quality.");
-    alert("Conversion failed. Try fewer/smaller images or lower quality.");
-  } finally {
-    convertBtn.disabled = items.length === 0;
-    clearBtn.disabled = items.length === 0;
-    fileInput.disabled = false;
+    const x = (boxW - w) / 2;
+    const y = (boxH - h) / 2;
+    return { x, y, w, h };
   }
-});
 
-enableActions();
+  async function loadImageDims(file) {
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+      await img.decode();
+      return { w: img.naturalWidth, h: img.naturalHeight, img };
+    } finally {
+      // caller can reuse object url separately; this one is temp
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  async function maybeDownscaleToBytes(file, maxSide = 2000) {
+    // Downscale big images to reduce memory / "Conversion failed"
+    // Returns { bytes: Uint8Array, mime: string, w: number, h: number }
+    const mime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+
+    const url = URL.createObjectURL(file);
+    try {
+      const img = new Image();
+      img.decoding = 'async';
+      img.src = url;
+      await img.decode();
+
+      let w = img.naturalWidth;
+      let h = img.naturalHeight;
+
+      const max = Math.max(w, h);
+      if (!$downscale?.checked || max <= maxSide) {
+        // no downscale: return original bytes
+        const ab = await file.arrayBuffer();
+        return { bytes: new Uint8Array(ab), mime, w, h };
+      }
+
+      const ratio = maxSide / max;
+      const tw = Math.round(w * ratio);
+      const th = Math.round(h * ratio);
+
+      const canvas = document.createElement('canvas');
+      canvas.width = tw;
+      canvas.height = th;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, tw, th);
+
+      const outBlob = await new Promise((resolve) => {
+        if (mime === 'image/png') {
+          canvas.toBlob(resolve, 'image/png');
+        } else {
+          canvas.toBlob(resolve, 'image/jpeg', 0.9);
+        }
+      });
+
+      if (!outBlob) {
+        const ab = await file.arrayBuffer();
+        return { bytes: new Uint8Array(ab), mime, w, h };
+      }
+
+      const outAb = await outBlob.arrayBuffer();
+      return { bytes: new Uint8Array(outAb), mime, w: tw, h: th };
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  function renderList() {
+    $list.innerHTML = '';
+
+    items.forEach((it, idx) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style.gap = '10px';
+      row.style.alignItems = 'center';
+      row.style.margin = '10px 0';
+      row.style.flexWrap = 'wrap';
+      row.draggable = true;
+      row.dataset.id = it.id;
+
+      const thumb = document.createElement('img');
+      thumb.src = it.url;
+      thumb.alt = it.file.name;
+      thumb.style.width = '64px';
+      thumb.style.height = '64px';
+      thumb.style.objectFit = 'cover';
+      thumb.style.borderRadius = '10px';
+      thumb.style.border = '1px solid rgba(255,255,255,.12)';
+
+      const name = document.createElement('div');
+      name.className = 'small';
+      name.style.flex = '1';
+      name.style.minWidth = '220px';
+      name.innerHTML = `<b>${idx + 1}.</b> ${esc(it.file.name)}`;
+
+      const remove = document.createElement('button');
+      remove.className = 'btn';
+      remove.textContent = 'Remove';
+      remove.onclick = () => {
+        URL.revokeObjectURL(it.url);
+        items = items.filter(x => x.id !== it.id);
+        renderList();
+        enableUI();
+        setStatus(items.length ? `Selected ${items.length} image(s).` : '');
+      };
+
+      // drag reorder
+      row.addEventListener('dragstart', (e) => {
+        row.style.opacity = '0.6';
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', it.id);
+      });
+      row.addEventListener('dragend', () => { row.style.opacity = '1'; });
+      row.addEventListener('dragover', (e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+      row.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const fromId = e.dataTransfer.getData('text/plain');
+        const toId = it.id;
+        if (!fromId || fromId === toId) return;
+
+        const fromIdx = items.findIndex(x => x.id === fromId);
+        const toIdx = items.findIndex(x => x.id === toId);
+        if (fromIdx < 0 || toIdx < 0) return;
+
+        const [moved] = items.splice(fromIdx, 1);
+        items.splice(toIdx, 0, moved);
+        renderList();
+      });
+
+      row.appendChild(thumb);
+      row.appendChild(name);
+      row.appendChild(remove);
+      $list.appendChild(row);
+    });
+  }
+
+  $files.addEventListener('change', () => {
+    const selected = Array.from($files.files || []);
+    if (!selected.length) return;
+
+    const next = selected.map(file => ({ id: uid(), file, url: URL.createObjectURL(file) }));
+    items = items.concat(next);
+
+    setStatus(`Selected ${items.length} image(s). Drag to reorder.`);
+    setResult('');
+    enableUI();
+    renderList();
+
+    // allow selecting same files again
+    $files.value = '';
+  });
+
+  $clear.addEventListener('click', reset);
+
+  $make.addEventListener('click', async () => {
+    if (!items.length) return;
+
+    $make.disabled = true;
+    $clear.disabled = true;
+    setResult('');
+    setStatus('Creating PDF…');
+
+    try {
+      const pdfDoc = await PDFLib.PDFDocument.create();
+      const margin = parseFloat($margin?.value || '12');
+      const fitMode = ($fit?.value || 'contain');
+      const pageMode = ($pageSize?.value || 'a4');
+
+      for (let i = 0; i < items.length; i++) {
+        const it = items[i];
+        setStatus(`Processing ${i + 1}/${items.length}: ${it.file.name}`);
+
+        // downscale (reduces memory errors)
+        const { bytes, mime, w: imgW, h: imgH } = await maybeDownscaleToBytes(it.file, 2000);
+
+        let embedded;
+        if (mime === 'image/png') {
+          embedded = await pdfDoc.embedPng(bytes);
+        } else {
+          embedded = await pdfDoc.embedJpg(bytes);
+        }
+
+        const box = getPageBox(pageMode, imgW, imgH);
+
+        // create page
+        const page = pdfDoc.addPage([box.w, box.h]);
+
+        // drawable area (margin)
+        const dw = Math.max(1, box.w - margin * 2);
+        const dh = Math.max(1, box.h - margin * 2);
+
+        const rect = fitRect(imgW, imgH, dw, dh, fitMode);
+
+        page.drawImage(embedded, {
+          x: margin + rect.x,
+          y: margin + rect.y,
+          width: rect.w,
+          height: rect.h,
+        });
+      }
+
+      setStatus('Saving…');
+      const pdfBytes = await pdfDoc.save();
+      const name = `images-${Date.now()}.pdf`;
+      downloadBytes(pdfBytes, name);
+
+      setStatus('Done.');
+      setResult(`✅ Downloaded: <b>${esc(name)}</b>`);
+    } catch (e) {
+      const msg = e?.message || String(e);
+      setStatus('Stopped.');
+      setResult(`❌ ${esc(msg)}<br/><span style="opacity:.75;">Tip: try enabling Auto downscale, using fewer images, or smaller images.</span>`);
+    } finally {
+      enableUI();
+    }
+  });
+
+  // init
+  enableUI();
+})();
