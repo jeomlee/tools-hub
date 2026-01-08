@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Merge PDF – Free Tool</title>
+  <meta name="description" content="Merge multiple PDF files into one PDF in your browser. No upload." />
+  <link rel="stylesheet" href="../../assets/style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>Merge PDF</h1>
+        <p>Combine multiple PDFs into one. Runs locally (no upload).</p>
+      </div>
+      <a class="badge" href="../../">← Back to Hub</a>
+    </div>
+
+    <div class="card">
+      <h2>Select PDFs</h2>
+      <p class="small">Tip: You can reorder files. Large PDFs may take longer.</p>
+      <div class="hr"></div>
+
+      <input id="files" class="input" type="file" accept="application/pdf" multiple />
+
+      <div class="row" style="margin-top:12px; gap:10px; flex-wrap:wrap;">
+        <button id="merge" class="btn primary" disabled>Merge</button>
+        <button id="clear" class="btn" disabled>Clear</button>
+      </div>
+
+      <div id="status" class="small" style="margin-top:12px; opacity:.85;"></div>
+
+      <div id="listWrap" style="margin-top:14px; display:none;">
+        <div class="hr"></div>
+        <h2 style="margin-bottom:8px;">Files</h2>
+        <p class="small" style="opacity:.85;">Drag to reorder. Or use ↑ ↓ buttons.</p>
+        <div id="fileList"></div>
+      </div>
+
+      <div class="hr" style="margin-top:16px;"></div>
+      <div id="result" class="small"></div>
+    </div>
+
+    <div class="footer small">All processing happens on your device. No files are uploaded.</div>
+  </div>
+
+  <!-- pdf-lib (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
