@@ -19,9 +19,7 @@
   let currentFile = null;
   let cancelled = false;
 
-  function setStatus(msg) {
-    $status.textContent = msg || '';
-  }
+  function setStatus(msg) { $status.textContent = msg || ''; }
 
   function setProgress(pct) {
     if (pct == null) {
@@ -39,6 +37,11 @@
     $cancel.disabled = true;
   }
 
+  function syncQualityUI() {
+    const fmt = ($format?.value || 'jpg').toLowerCase();
+    if ($jpgQualityWrap) $jpgQualityWrap.style.display = (fmt === 'jpg') ? 'inline-block' : 'none';
+  }
+
   function resetUI() {
     currentFile = null;
     cancelled = false;
@@ -48,11 +51,6 @@
     setProgress(null);
     enableButtons(false);
     syncQualityUI();
-  }
-
-  function syncQualityUI() {
-    const fmt = ($format?.value || 'jpg').toLowerCase();
-    if ($jpgQualityWrap) $jpgQualityWrap.style.display = (fmt === 'jpg') ? 'inline-block' : 'none';
   }
 
   function downloadBlob(blob, filename) {
@@ -66,9 +64,7 @@
     URL.revokeObjectURL(url);
   }
 
-  function stripExt(name) {
-    return name.replace(/\.[^.]+$/, '');
-  }
+  function stripExt(name) { return name.replace(/\.[^.]+$/, ''); }
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, (m) => ({
@@ -96,7 +92,6 @@
       canvas.toBlob((b) => resolve(b), mime, quality);
     });
 
-    // free memory
     canvas.width = 1;
     canvas.height = 1;
 
@@ -149,7 +144,6 @@
       const ext = (format === 'jpg') ? 'jpg' : 'png';
       const base = stripExt(currentFile.name);
 
-      // single page => direct download
       if (total === 1) {
         setStatus('Rendering page 1/1…');
         setProgress(40);
@@ -166,9 +160,7 @@
         return finalize();
       }
 
-      // multi pages => zip
       const zip = new JSZip();
-
       for (let i = 1; i <= total; i++) {
         if (cancelled) throw new Error('Cancelled.');
         setStatus(`Rendering page ${i}/${total}…`);
@@ -186,10 +178,7 @@
 
       const zipBlob = await zip.generateAsync(
         { type: 'blob' },
-        (meta) => {
-          // meta.percent is 0..100
-          setProgress(90 + Math.floor(meta.percent * 0.10));
-        }
+        (meta) => setProgress(90 + Math.floor(meta.percent * 0.10))
       );
 
       if (cancelled) throw new Error('Cancelled.');

@@ -1,24 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/tools/jpg-to-pdf/</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/tools/wordcount/</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/tools/sign-png/</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/about.html</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/privacy.html</loc>
-  </url>
-  <url>
-    <loc>https://tools-hub-4t9.pages.dev/terms.html</loc>
-  </url>
+  <url><loc>https://tools-hub-4t9.pages.dev/</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/about</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/privacy</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/terms</loc></url>
+
+  <url><loc>https://tools-hub-4t9.pages.dev/tools/jpg-to-pdf/</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/tools/pdf-to-jpg/</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/tools/word-count/</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/tools/password-generator/</loc></url>
+  <url><loc>https://tools-hub-4t9.pages.dev/tools/signature-png/</loc></url>
 </urlset>

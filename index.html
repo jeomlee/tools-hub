@@ -3,106 +3,112 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mini Tools Hub – PDF • Image • Text</title>
+  <meta name="description" content="Free, fast browser-based tools: PDF to JPG, JPG to PDF, word count, password generator, signature PNG. No signup, no uploads." />
 
-  <!-- Google Search Console verification -->
-  <meta name="google-site-verification" content="SbjFVc47uTa8rga4hvQ6nQLdV7q9ra9mdwyhCmL1T98" />
-
-  <!-- Google AdSense (site-wide, approval-safe) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9058387162064629"
-     crossorigin="anonymous"></script>
-
-  <!-- SEO -->
-  <title>Free Mini Tools Hub – PDF • Image • Text</title>
-  <meta name="description" content="A lightweight hub of free online tools: JPG to PDF, PDF to JPG, word count, password generator, and signature PNG. No signup required." />
+  <!-- Canonical + OG -->
+  <link rel="canonical" href="https://tools-hub-4t9.pages.dev/" />
+  <meta property="og:title" content="Mini Tools Hub – Free Browser Tools" />
+  <meta property="og:description" content="Free, fast, no signup. Everything runs in your browser (no uploads)." />
+  <meta property="og:url" content="https://tools-hub-4t9.pages.dev/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
 
   <link rel="stylesheet" href="./assets/style.css" />
 </head>
+
 <body>
   <div class="container">
-
-    <!-- HEADER -->
     <div class="header">
       <div class="brand">
         <h1>Mini Tools Hub</h1>
         <p>Free, fast, no signup. Everything runs in your browser.</p>
       </div>
-      <div class="badge" id="statusBadge">● Ready</div>
+      <div class="row" style="gap:10px; flex-wrap:wrap;">
+        <span class="badge">● Client-side</span>
+        <a class="badge" href="./about">About</a>
+        <a class="badge" href="./privacy">Privacy</a>
+        <a class="badge" href="./terms">Terms</a>
+      </div>
     </div>
 
-    <!-- WHY SECTION (AdSense approval helper) -->
-    <div class="card" style="margin-bottom:16px;">
-      <h2>Why use this site?</h2>
-      <p class="small">
-        This site offers simple and fast online tools that work directly in your browser.
-        No files are uploaded, no accounts are required, and your privacy is respected.
-        It is designed for students, office workers, and anyone who needs quick utility tools.
+    <div class="card">
+      <h2>Find a tool</h2>
+      <p class="small">Search by keyword (PDF, JPG, word, password…).</p>
+      <div class="row" style="gap:10px; flex-wrap:wrap;">
+        <input id="toolSearch" class="input" placeholder="Search tools…" style="flex:1; min-width:220px;" />
+        <select id="toolFilter" class="input" style="width:auto;">
+          <option value="all" selected>All</option>
+          <option value="pdf">PDF</option>
+          <option value="image">Image</option>
+          <option value="text">Text</option>
+          <option value="security">Security</option>
+        </select>
+      </div>
+
+      <div id="recentWrap" style="margin-top:12px; display:none;">
+        <div class="hr"></div>
+        <div class="small" style="margin-bottom:8px;">Recent</div>
+        <div id="recentTools" class="row" style="gap:10px; flex-wrap:wrap;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Tools</h2>
+      <p class="small">Files never leave your device. (No upload to server.)</p>
+      <div class="hr"></div>
+
+      <div id="toolsGrid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px;">
+        <a class="card" data-cat="pdf" data-name="jpg to pdf image to pdf png to pdf" href="./tools/jpg-to-pdf/">
+          <h3>JPG / PNG → PDF</h3>
+          <p class="small">Convert images into a single PDF. Reorder pages, set margins & quality.</p>
+          <div class="row" style="gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <span class="badge">PDF</span><span class="badge">No upload</span><span class="badge">Client-side</span>
+          </div>
+        </a>
+
+        <a class="card" data-cat="pdf" data-name="pdf to jpg pdf to png extract pages images" href="./tools/pdf-to-jpg/">
+          <h3>PDF → JPG / PNG</h3>
+          <p class="small">Extract each PDF page as an image. Multi-page downloads as ZIP.</p>
+          <div class="row" style="gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <span class="badge">PDF</span><span class="badge">No upload</span><span class="badge">Client-side</span>
+          </div>
+        </a>
+
+        <a class="card" data-cat="text" data-name="word count character count 글자수 단어수" href="./tools/word-count/">
+          <h3>Word Count</h3>
+          <p class="small">Count words, characters, and characters without spaces.</p>
+          <div class="row" style="gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <span class="badge">TEXT</span><span class="badge">Instant</span>
+          </div>
+        </a>
+
+        <a class="card" data-cat="security" data-name="password generator strong password" href="./tools/password-generator/">
+          <h3>Password Generator</h3>
+          <p class="small">Create strong passwords quickly with one click.</p>
+          <div class="row" style="gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <span class="badge">SECURITY</span><span class="badge">Offline</span>
+          </div>
+        </a>
+
+        <a class="card" data-cat="image" data-name="signature png transparent 서명" href="./tools/signature-png/">
+          <h3>Signature → PNG</h3>
+          <p class="small">Draw your signature and download a transparent PNG.</p>
+          <div class="row" style="gap:8px; flex-wrap:wrap; margin-top:8px;">
+            <span class="badge">IMAGE</span><span class="badge">Transparent</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="hr" style="margin-top:16px;"></div>
+      <p class="small" style="opacity:.9;">
+        Tip: Very large PDFs may be slow on mobile. Keep this tab open while converting.
       </p>
     </div>
 
-    <!-- TOOLS GRID -->
-    <div class="grid" id="toolsGrid">
-
-      <a class="card" href="./tools/jpg-to-pdf/">
-        <h2>JPG to PDF</h2>
-        <p>Convert JPG or PNG images into a single PDF directly in your browser.</p>
-        <div class="meta">
-          <span class="pill">PDF</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="./tools/pdf-to-jpg/">
-        <h2>PDF to JPG</h2>
-        <p>Extract PDF pages as image files quickly and easily.</p>
-        <div class="meta">
-          <span class="pill">PDF</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="./tools/wordcount/">
-        <h2>Word Count</h2>
-        <p>Count words, characters, and characters without spaces instantly.</p>
-        <div class="meta">
-          <span class="pill">TEXT</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="./tools/password/">
-        <h2>Password Generator</h2>
-        <p>Create strong and secure passwords with one click.</p>
-        <div class="meta">
-          <span class="pill">SECURITY</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="./tools/sign-png/">
-        <h2>Signature to PNG</h2>
-        <p>Draw your signature and download it as a transparent PNG.</p>
-        <div class="meta">
-          <span class="pill">IMAGE</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-    </div>
-
-    <!-- FOOTER (AdSense 필수 정책 링크) -->
-    <div class="footer">
-      <div class="row">
-        <a class="btn" href="./about.html">About</a>
-        <a class="btn" href="./privacy.html">Privacy</a>
-        <a class="btn" href="./terms.html">Terms</a>
-      </div>
-      <div class="small" style="margin-top:10px;">
-        © 2026 Mini Tools Hub. Simple browser-based utilities.
-      </div>
-    </div>
-
+    <div class="footer small">© 2026 Mini Tools Hub</div>
   </div>
 
-  <script src="./assets/hub.js"></script>
+  <script src="./assets/site.js"></script>
 </body>
 </html>
