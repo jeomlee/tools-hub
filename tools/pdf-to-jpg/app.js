@@ -8,6 +8,8 @@
   const $result = document.getElementById('result');
   const $scale = document.getElementById('scale');
   const $format = document.getElementById('format');
+  const $jpgQuality = document.getElementById('jpgQuality');
+  const $jpgQualityWrap = document.getElementById('jpgQualityWrap');
   const $progressWrap = document.getElementById('progressWrap');
   const $progressBar = document.getElementById('progressBar');
 
@@ -20,6 +22,7 @@
   function setStatus(msg) {
     $status.textContent = msg || '';
   }
+
   function setProgress(pct) {
     if (pct == null) {
       $progressWrap.style.display = 'none';
@@ -29,11 +32,13 @@
     $progressWrap.style.display = 'block';
     $progressBar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
   }
+
   function enableButtons(hasFile) {
     $extract.disabled = !hasFile;
     $clear.disabled = !hasFile;
     $cancel.disabled = true;
   }
+
   function resetUI() {
     currentFile = null;
     cancelled = false;
@@ -42,6 +47,12 @@
     setStatus('');
     setProgress(null);
     enableButtons(false);
+    syncQualityUI();
+  }
+
+  function syncQualityUI() {
+    const fmt = ($format?.value || 'jpg').toLowerCase();
+    if ($jpgQualityWrap) $jpgQualityWrap.style.display = (fmt === 'jpg') ? 'inline-block' : 'none';
   }
 
   function downloadBlob(blob, filename) {
@@ -55,7 +66,17 @@
     URL.revokeObjectURL(url);
   }
 
-  async function renderPage(pdf, pageNumber, scale, format) {
+  function stripExt(name) {
+    return name.replace(/\.[^.]+$/, '');
+  }
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+  }
+
+  async function renderPageToImageBlob(pdf, pageNumber, scale, format, jpgQuality) {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale });
 
@@ -69,12 +90,13 @@
 
     const isJpg = format === 'jpg';
     const mime = isJpg ? 'image/jpeg' : 'image/png';
-    const quality = isJpg ? 0.85 : 1.0;
+    const quality = isJpg ? jpgQuality : 1.0;
 
     const blob = await new Promise((resolve) => {
       canvas.toBlob((b) => resolve(b), mime, quality);
     });
 
+    // free memory
     canvas.width = 1;
     canvas.height = 1;
 
@@ -83,17 +105,20 @@
   }
 
   $file.addEventListener('change', () => {
-    currentFile = $file.files[0] || null;
+    currentFile = ($file.files && $file.files[0]) ? $file.files[0] : null;
     cancelled = false;
     $result.innerHTML = '';
-    setStatus(currentFile ? `Selected: ${currentFile.name}` : '');
+    setStatus(currentFile ? `Selected: ${currentFile.name} (${Math.round(currentFile.size / 1024 / 1024)} MB)` : '');
     enableButtons(!!currentFile);
   });
 
+  $format?.addEventListener('change', syncQualityUI);
+
   $clear.addEventListener('click', resetUI);
+
   $cancel.addEventListener('click', () => {
     cancelled = true;
-    setStatus('Cancelling…');
+    setStatus('Cancelling… (stops after current page)');
   });
 
   $extract.addEventListener('click', async () => {
@@ -103,56 +128,83 @@
     $cancel.disabled = false;
     $extract.disabled = true;
     $clear.disabled = true;
+    $result.innerHTML = '';
 
     const scale = parseFloat($scale.value || '1.5');
-    const format = ($format.value || 'png').toLowerCase();
+    const format = ($format.value || 'jpg').toLowerCase();
+    const jpgQuality = format === 'jpg'
+      ? Math.max(0.1, Math.min(1.0, parseFloat($jpgQuality?.value || '0.85')))
+      : 1.0;
 
     try {
       setStatus('Loading PDF…');
       setProgress(5);
 
-      const pdf = await pdfjsLib.getDocument({
-        data: await currentFile.arrayBuffer()
-      }).promise;
-
+      const pdf = await pdfjsLib.getDocument({ data: await currentFile.arrayBuffer() }).promise;
       const total = pdf.numPages;
-      setStatus(`Pages: ${total}`);
+
+      setStatus(`PDF loaded. Pages: ${total}`);
       setProgress(10);
 
-      const ext = format === 'jpg' ? 'jpg' : 'png';
+      const ext = (format === 'jpg') ? 'jpg' : 'png';
+      const base = stripExt(currentFile.name);
 
+      // single page => direct download
       if (total === 1) {
-        const blob = await renderPage(pdf, 1, scale, format);
-        downloadBlob(blob, `${stripExt(currentFile.name)}.${ext}`);
+        setStatus('Rendering page 1/1…');
+        setProgress(40);
+
+        const blob = await renderPageToImageBlob(pdf, 1, scale, format, jpgQuality);
+        if (cancelled) throw new Error('Cancelled.');
+
+        const outName = `${base}-p1.${ext}`;
+        downloadBlob(blob, outName);
+
         setProgress(100);
         setStatus('Done.');
+        $result.innerHTML = `✅ Downloaded: <b>${esc(outName)}</b>`;
         return finalize();
       }
 
+      // multi pages => zip
       const zip = new JSZip();
+
       for (let i = 1; i <= total; i++) {
         if (cancelled) throw new Error('Cancelled.');
-        setStatus(`Rendering page ${i}/${total}`);
-        setProgress(10 + Math.floor((i / total) * 80));
+        setStatus(`Rendering page ${i}/${total}…`);
+        setProgress(10 + Math.floor((i / total) * 75));
 
-        const blob = await renderPage(pdf, i, scale, format);
-        zip.file(
-          `${stripExt(currentFile.name)}-p${String(i).padStart(3, '0')}.${ext}`,
-          blob
-        );
+        const blob = await renderPageToImageBlob(pdf, i, scale, format, jpgQuality);
+        if (cancelled) throw new Error('Cancelled.');
+
+        const filename = `${base}-p${String(i).padStart(3, '0')}.${ext}`;
+        zip.file(filename, blob);
       }
 
       setStatus('Creating ZIP…');
-      setProgress(92);
+      setProgress(90);
 
-      const zipBlob = await zip.generateAsync({ type: 'blob' });
-      downloadBlob(zipBlob, `${stripExt(currentFile.name)}-images.zip`);
+      const zipBlob = await zip.generateAsync(
+        { type: 'blob' },
+        (meta) => {
+          // meta.percent is 0..100
+          setProgress(90 + Math.floor(meta.percent * 0.10));
+        }
+      );
+
+      if (cancelled) throw new Error('Cancelled.');
+
+      const zipName = `${base}-${ext}.zip`;
+      downloadBlob(zipBlob, zipName);
 
       setProgress(100);
       setStatus('Done.');
+      $result.innerHTML = `✅ Downloaded ZIP: <b>${esc(zipName)}</b> (${total} images)`;
       finalize();
     } catch (e) {
-      setStatus(e.message || 'Error occurred.');
+      const msg = e?.message || 'Error occurred.';
+      setStatus('Stopped.');
+      $result.innerHTML = `❌ ${esc(msg)}`;
       finalize(true);
     }
   });
@@ -162,10 +214,6 @@
     $extract.disabled = !currentFile;
     $clear.disabled = !currentFile;
     setProgress(null);
-  }
-
-  function stripExt(name) {
-    return name.replace(/\.[^.]+$/, '');
   }
 
   resetUI();
