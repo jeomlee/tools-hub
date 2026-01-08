@@ -13,13 +13,16 @@
   const $progressWrap = document.getElementById('progressWrap');
   const $progressBar = document.getElementById('progressBar');
 
+  // pdf.js worker
   pdfjsLib.GlobalWorkerOptions.workerSrc =
     'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.js';
 
   let currentFile = null;
   let cancelled = false;
 
-  function setStatus(msg) { $status.textContent = msg || ''; }
+  function setStatus(msg) {
+    $status.textContent = msg || '';
+  }
 
   function setProgress(pct) {
     if (pct == null) {
@@ -53,6 +56,16 @@
     syncQualityUI();
   }
 
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, (m) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[m]));
+  }
+
+  function stripExt(name) {
+    return name.replace(/\.[^.]+$/, '');
+  }
+
   function downloadBlob(blob, filename) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -62,14 +75,6 @@
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-  }
-
-  function stripExt(name) { return name.replace(/\.[^.]+$/, ''); }
-
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, (m) => ({
-      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[m]));
   }
 
   async function renderPageToImageBlob(pdf, pageNumber, scale, format, jpgQuality) {
@@ -92,12 +97,15 @@
       canvas.toBlob((b) => resolve(b), mime, quality);
     });
 
+    // free memory
     canvas.width = 1;
     canvas.height = 1;
 
     if (!blob) throw new Error('Image generation failed.');
     return blob;
   }
+
+  $format?.addEventListener('change', syncQualityUI);
 
   $file.addEventListener('change', () => {
     currentFile = ($file.files && $file.files[0]) ? $file.files[0] : null;
@@ -106,8 +114,6 @@
     setStatus(currentFile ? `Selected: ${currentFile.name} (${Math.round(currentFile.size / 1024 / 1024)} MB)` : '');
     enableButtons(!!currentFile);
   });
-
-  $format?.addEventListener('change', syncQualityUI);
 
   $clear.addEventListener('click', resetUI);
 
@@ -144,6 +150,7 @@
       const ext = (format === 'jpg') ? 'jpg' : 'png';
       const base = stripExt(currentFile.name);
 
+      // Single-page => direct download
       if (total === 1) {
         setStatus('Rendering page 1/1…');
         setProgress(40);
@@ -160,6 +167,7 @@
         return finalize();
       }
 
+      // Multi-page => ZIP
       const zip = new JSZip();
       for (let i = 1; i <= total; i++) {
         if (cancelled) throw new Error('Cancelled.');
