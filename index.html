@@ -4,6 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
+  <!-- Theme color (mobile address bar) -->
+  <meta name="theme-color" content="#0b0b0b" />
+
   <!-- Google Search Console verification -->
   <meta name="google-site-verification" content="SbjFVc47uTa8rga4hvQ6nQLdV7q9ra9mdwyhCmL1T98" />
 
@@ -14,10 +17,24 @@
   <!-- SEO -->
   <title>Free Mini Tools Hub – PDF • Image • Text</title>
   <meta name="description" content="A lightweight hub of free online tools: JPG to PDF, PDF to JPG, word count, password generator, and signature PNG. No signup required." />
+  <link rel="canonical" href="https://tools-hub-4t9.pages.dev/" />
+
+  <!-- Open Graph / Twitter -->
+  <meta property="og:title" content="Free Mini Tools Hub – PDF • Image • Text" />
+  <meta property="og:description" content="Free, fast, no signup. Tools run in your browser (no uploads)." />
+  <meta property="og:url" content="https://tools-hub-4t9.pages.dev/" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
 
   <link rel="stylesheet" href="./assets/style.css" />
 </head>
 <body>
+  <noscript>
+    <div style="max-width:960px;margin:12px auto;padding:12px;border:1px solid rgba(255,255,255,.12);border-radius:12px;">
+      This site needs JavaScript for most tools. Please enable JavaScript and reload.
+    </div>
+  </noscript>
+
   <div class="container">
 
     <!-- HEADER -->
@@ -26,7 +43,7 @@
         <h1>Mini Tools Hub</h1>
         <p>Free, fast, no signup. Everything runs in your browser.</p>
       </div>
-      <div class="badge" id="statusBadge">● Ready</div>
+      <div class="badge" id="statusBadge" aria-live="polite">● Ready</div>
     </div>
 
     <!-- WHY SECTION (AdSense approval helper) -->
@@ -37,12 +54,28 @@
         No files are uploaded, no accounts are required, and your privacy is respected.
         It is designed for students, office workers, and anyone who needs quick utility tools.
       </p>
+      <div class="meta" style="margin-top:10px;">
+        <span class="pill">No upload</span>
+        <span class="pill">Client-side</span>
+        <span class="pill">Free</span>
+      </div>
+    </div>
+
+    <!-- OPTIONAL: QUICK SEARCH (UX boost; hub.js can wire this) -->
+    <div class="card" style="margin-bottom:16px;">
+      <h2>Find a tool</h2>
+      <p class="small">Type a keyword (PDF, JPG, word, password…).</p>
+      <input id="toolSearch" class="input" type="text" placeholder="Search tools…" autocomplete="off" />
+      <p class="small" style="opacity:.75;margin-top:8px;">
+        Tip: Bookmark this page for quick access.
+      </p>
     </div>
 
     <!-- TOOLS GRID -->
     <div class="grid" id="toolsGrid">
 
-      <a class="card" href="./tools/jpg-to-pdf/">
+      <!-- NOTE: Make sure these href paths match your actual folder names under /tools/ -->
+      <a class="card" href="./tools/jpg-to-pdf/" data-name="jpg to pdf png to pdf image to pdf">
         <h2>JPG to PDF</h2>
         <p>Convert JPG or PNG images into a single PDF directly in your browser.</p>
         <div class="meta">
@@ -51,7 +84,7 @@
         </div>
       </a>
 
-      <a class="card" href="./tools/pdf-to-jpg/">
+      <a class="card" href="./tools/pdf-to-jpg/" data-name="pdf to jpg pdf to png extract pages">
         <h2>PDF to JPG</h2>
         <p>Extract PDF pages as image files quickly and easily.</p>
         <div class="meta">
@@ -60,7 +93,7 @@
         </div>
       </a>
 
-      <a class="card" href="./tools/wordcount/">
+      <a class="card" href="./tools/wordcount/" data-name="word count character count 글자수 단어수">
         <h2>Word Count</h2>
         <p>Count words, characters, and characters without spaces instantly.</p>
         <div class="meta">
@@ -69,7 +102,7 @@
         </div>
       </a>
 
-      <a class="card" href="./tools/password/">
+      <a class="card" href="./tools/password/" data-name="password generator strong secure">
         <h2>Password Generator</h2>
         <p>Create strong and secure passwords with one click.</p>
         <div class="meta">
@@ -78,7 +111,7 @@
         </div>
       </a>
 
-      <a class="card" href="./tools/sign-png/">
+      <a class="card" href="./tools/sign-png/" data-name="signature png transparent 서명">
         <h2>Signature to PNG</h2>
         <p>Draw your signature and download it as a transparent PNG.</p>
         <div class="meta">
@@ -89,12 +122,14 @@
 
     </div>
 
-    <!-- FOOTER (AdSense 필수 정책 링크) -->
+    <!-- FOOTER (policy links for AdSense) -->
     <div class="footer">
       <div class="row">
         <a class="btn" href="./about.html">About</a>
         <a class="btn" href="./privacy.html">Privacy</a>
         <a class="btn" href="./terms.html">Terms</a>
+        <!-- Optional: make sitemap discoverable -->
+        <a class="btn" href="./sitemap.xml">Sitemap</a>
       </div>
       <div class="small" style="margin-top:10px;">
         © 2026 Mini Tools Hub. Simple browser-based utilities.
