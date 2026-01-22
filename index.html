@@ -12,8 +12,18 @@
      crossorigin="anonymous"></script>
 
   <!-- SEO -->
-  <title>Free Mini Tools Hub – PDF • Image • Text</title>
-  <meta name="description" content="A lightweight hub of free online tools: JPG to PDF, PDF to JPG, word count, password generator, and signature PNG. No signup required." />
+  <title>Mini Tools Hub – Free PDF, Image & Text Tools</title>
+  <meta name="description" content="Free, fast browser-based utilities: PDF to JPG/PNG, JPG to PDF, merge/split PDFs, word count, password generator, and signature PNG. No signup." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://tools-hub-4t9.pages.dev/" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Mini Tools Hub – Free PDF, Image & Text Tools" />
+  <meta property="og:description" content="Fast browser-based utilities for PDFs, text, and images. No signup. Privacy-friendly." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tools-hub-4t9.pages.dev/" />
+  <meta name="twitter:card" content="summary" />
 
   <link rel="stylesheet" href="./assets/style.css" />
 </head>
@@ -33,31 +43,47 @@
     <div class="card" style="margin-bottom:16px;">
       <h2>Why use this site?</h2>
       <p class="small">
-        Mini Tools Hub provides simple browser-based utilities for everyday work.
-        No accounts are required, and most tools run locally on your device to reduce uploads
-        and keep things private.
+        Mini Tools Hub provides simple utilities for everyday work: PDF conversion, text stats, and small image tools.
+        No accounts are required, and most tools run locally on your device to reduce uploads and keep things private.
       </p>
       <p class="small">
-        If you need quick PDF conversion, text counting, or small image utilities without installing apps,
-        this site is built for that.
+        If you need quick results without installing software, this site is built for students, office workers, and creators.
       </p>
     </div>
 
     <!-- TOOLS GRID -->
     <div class="grid" id="toolsGrid">
 
-      <a class="card" href="./tools/jpg-to-pdf/">
-        <h2>JPG to PDF</h2>
-        <p>Combine JPG/PNG images into one PDF file in your browser.</p>
+      <a class="card" href="./tools/pdf-to-jpg/">
+        <h2>PDF to JPG</h2>
+        <p>Convert each PDF page into JPG or PNG images. Download as ZIP.</p>
         <div class="meta">
           <span class="pill">PDF</span>
           <span>Open →</span>
         </div>
       </a>
 
-      <a class="card" href="./tools/pdf-to-jpg/">
-        <h2>PDF to JPG</h2>
-        <p>Convert each PDF page into JPG/PNG images. Download as ZIP.</p>
+      <a class="card" href="./tools/jpg-to-pdf/">
+        <h2>JPG to PDF</h2>
+        <p>Combine JPG/PNG images into one PDF file directly in your browser.</p>
+        <div class="meta">
+          <span class="pill">PDF</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/merge-pdf/">
+        <h2>Merge PDF</h2>
+        <p>Combine multiple PDFs into a single PDF file locally in your browser.</p>
+        <div class="meta">
+          <span class="pill">PDF</span>
+          <span>Open →</span>
+        </div>
+      </a>
+
+      <a class="card" href="./tools/split-pdf/">
+        <h2>Split PDF</h2>
+        <p>Split a PDF into multiple PDFs by page ranges. Download as ZIP.</p>
         <div class="meta">
           <span class="pill">PDF</span>
           <span>Open →</span>
@@ -91,27 +117,9 @@
         </div>
       </a>
 
-      <a class="card" href="./tools/merge-pdf/">
-        <h2>Merge PDF</h2>
-        <p>Combine multiple PDFs into one PDF directly in your browser.</p>
-        <div class="meta">
-          <span class="pill">PDF</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
-      <a class="card" href="./tools/split-pdf/">
-        <h2>Split PDF</h2>
-        <p>Split a PDF into multiple PDFs by page ranges. Download as ZIP.</p>
-        <div class="meta">
-          <span class="pill">PDF</span>
-          <span>Open →</span>
-        </div>
-      </a>
-
     </div>
 
-    <!-- ✅ ADSENSE/QUALITY CONTENT: ABOUT THIS SITE -->
+    <!-- QUALITY CONTENT (ADSENSE/SEO) -->
     <div class="card" style="margin-top:24px;">
       <h2>About Mini Tools Hub</h2>
       <p class="small">
@@ -119,12 +127,26 @@
         The goal is to keep tools simple, fast, and accessible from any device without installing software.
       </p>
       <p class="small">
-        For privacy, most processing runs locally in your browser. When a tool needs file handling,
-        it is designed to minimize data collection and avoid storing files on a server.
+        Many tools run locally in your browser, which helps reduce file uploads. We aim to minimize data collection
+        and avoid storing user files on servers whenever possible.
       </p>
       <p class="small">
-        This site is maintained as a lightweight web service for students, office workers, and creators
-        who want quick results with minimal friction.
+        This site is maintained as a lightweight web service. If you find a bug or want to suggest a tool,
+        please reach out via the contact email below.
+      </p>
+    </div>
+
+    <!-- FAQ (very helpful for "value" signals) -->
+    <div class="card" style="margin-top:12px;">
+      <h2>FAQ</h2>
+      <p class="small"><strong>Do you upload my files?</strong><br/>
+        Many tools process files locally in your browser. For tools that require file handling, we avoid storing files and minimize data retention.
+      </p>
+      <p class="small"><strong>Is it free?</strong><br/>
+        Yes. The tools are free to use. Ads may appear to support operating costs.
+      </p>
+      <p class="small"><strong>Which tools are most popular?</strong><br/>
+        PDF converters (PDF to JPG, JPG to PDF) are commonly used by students and office workers.
       </p>
     </div>
 

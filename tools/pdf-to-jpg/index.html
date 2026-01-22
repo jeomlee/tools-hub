@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <title>PDF to JPG – Free Tool</title>
-  <meta name="description" content="Convert PDF pages to JPG or PNG images directly in your browser. No upload required." />
+  <meta name="description" content="Convert PDF pages to JPG or PNG images directly in your browser. Download as ZIP. No upload required." />
+
+  <link rel="canonical" href="https://tools-hub-4t9.pages.dev/tools/pdf-to-jpg/" />
+
+  <meta property="og:title" content="PDF to JPG – Free Tool" />
+  <meta property="og:description" content="Convert PDF pages to JPG/PNG locally in your browser. Download images as ZIP. No signup." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://tools-hub-4t9.pages.dev/tools/pdf-to-jpg/" />
+  <meta name="twitter:card" content="summary" />
 
   <link rel="stylesheet" href="../../assets/style.css" />
 </head>
@@ -22,7 +30,7 @@
 
     <div class="card">
       <h2>Upload a PDF</h2>
-      <p class="small">Recommended under 50MB.</p>
+      <p class="small">Tip: For best performance, keep files under ~50MB when possible.</p>
       <div class="hr"></div>
 
       <input id="file" class="input" type="file" accept="application/pdf" />
@@ -31,9 +39,9 @@
         <label class="small">
           Scale
           <select id="scale" class="input" style="width:auto; margin-left:8px;">
-            <option value="1.0">1.0</option>
-            <option value="1.5" selected>1.5</option>
-            <option value="2.0">2.0</option>
+            <option value="1.0">1.0 (fast)</option>
+            <option value="1.5" selected>1.5 (balanced)</option>
+            <option value="2.0">2.0 (sharp)</option>
           </select>
         </label>
 
@@ -49,26 +57,69 @@
       <div class="row" style="margin-top:12px;">
         <button id="extract" class="btn primary" disabled>Extract pages</button>
         <button id="clear" class="btn" disabled>Clear</button>
+        <button id="cancel" class="btn" disabled>Cancel</button>
       </div>
 
-      <div id="status" class="small" style="margin-top:12px;"></div>
-      <div id="result" class="small" style="margin-top:12px;"></div>
+      <div id="status" class="small" style="margin-top:12px; opacity:.9;"></div>
+
+      <div id="progressWrap" style="margin-top:10px; display:none;">
+        <div style="height:10px; background:rgba(255,255,255,.08); border-radius:999px; overflow:hidden;">
+          <div id="progressBar" style="height:10px; width:0%; background:rgba(255,255,255,.5);"></div>
+        </div>
+      </div>
+
+      <div class="hr" style="margin-top:16px;"></div>
+      <div id="result" class="small"></div>
     </div>
-    <div class="card" style="margin-top:24px;">
-      <h2>About this tool</h2>
+
+    <!-- ✅ SEO/ADSENSE CONTENT BLOCK -->
+    <div class="card" style="margin-top:20px;">
+      <h2>What is PDF to JPG?</h2>
       <p class="small">
-        PDF to JPG lets you convert each page of a PDF file into JPG or PNG images directly in your browser.
-        All processing runs locally on your device, so your PDF is not uploaded to any server.
-        This is useful when you want to share a single page, extract pages for presentations,
-        or convert a document into images for editing and preview.
+        PDF to JPG converts each page of a PDF file into image files (JPG or PNG) directly in your browser.
+        This is useful when you need to share a single page, upload PDF content to platforms that only accept images,
+        or extract slides and diagrams from a PDF.
+      </p>
+
+      <div class="hr"></div>
+
+      <h2>Common use cases</h2>
+      <ul class="small" style="margin:0; padding-left:16px; line-height:1.7;">
+        <li>Share a specific page via chat or email</li>
+        <li>Upload documents to websites that do not support PDF uploads</li>
+        <li>Extract slides, charts, or diagrams as images</li>
+        <li>Convert PDF pages to images for presentations</li>
+      </ul>
+
+      <div class="hr"></div>
+
+      <h2>Privacy</h2>
+      <p class="small">
+        Your files are processed on your device. This tool does not require uploading your PDF to a server.
+      </p>
+
+      <div class="hr"></div>
+
+      <h2>Troubleshooting</h2>
+      <p class="small">
+        If conversion fails, try lowering the scale (1.0) or switching output format to PNG.
+        Very large PDFs may take longer or fail on low-memory devices.
       </p>
     </div>
-    <div class="footer small">All processing happens locally.</div>
+
+    <div class="footer small">All processing happens locally on your device. No files are uploaded.</div>
   </div>
 
-  <!-- ✅ pdf.js v2 UMD (전역 pdfjsLib 보장) -->
+  <!-- ✅ pdf.js v2 UMD (guarantees window.pdfjsLib) -->
   <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.min.js"></script>
-  <script src="https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js"></script>
+  <!-- Worker file (pdf.js will load it from this URL) -->
+  <script>
+    // Ensure worker is set (UMD exposes pdfjsLib)
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+        'https://unpkg.com/pdfjs-dist@2.16.105/build/pdf.worker.min.js';
+    }
+  </script>
 
   <!-- JSZip -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
